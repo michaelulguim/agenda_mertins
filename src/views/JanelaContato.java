@@ -463,25 +463,27 @@ public class JanelaContato extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_botaoGrupoActionPerformed
 
     private void comboEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoActionPerformed
-
-        EstadoBEAN estado = (EstadoBEAN) this.comboEstado.getSelectedItem();
         try {
-            this.comboEstado.enableInputMethods(true);
+            EstadoBEAN estado;
+            estado = (EstadoBEAN) this.comboEstado.getSelectedItem();
+
             this.populaComboCidade(estado.getCod_estado());
         } catch (SQLException ex) {
             Logger.getLogger(JanelaContato.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+
     }//GEN-LAST:event_comboEstadoActionPerformed
 
     private void comboPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPaisActionPerformed
-        // TODO add your handling code here:
-        PaisBEAN teste = (PaisBEAN) this.comboPais.getSelectedItem();
         try {
-            this.populaComboEstado(teste.getId());
+            PaisBEAN pais = (PaisBEAN) this.comboPais.getSelectedItem();
+
+            this.populaComboEstado(pais.getId());
         } catch (SQLException ex) {
             Logger.getLogger(JanelaContato.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }//GEN-LAST:event_comboPaisActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoFecharJanela;

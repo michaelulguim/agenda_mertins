@@ -1,8 +1,6 @@
-
 package views;
 
 import bean.ContatoBEAN;
-import bean.ProfissaoBEAN;
 import dao.ContatoDAO;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -11,20 +9,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
-
 public class JanelaProcura extends javax.swing.JInternalFrame {
 
-private DefaultTableModel dtg;
+    private DefaultTableModel dtg;
 
-    public JanelaProcura() {
+    public JanelaProcura() throws SQLException, ParseException {
         initComponents();
-    try {
-        this.listaContatos();
-    } catch (SQLException | ParseException ex) {
-        Logger.getLogger(JanelaProcura.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    }
 
+        ContatoDAO ct = new ContatoDAO();
+        listaContatos(ct.localizar());
+
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -36,6 +31,11 @@ private DefaultTableModel dtg;
         tabelaGeral = new javax.swing.JTable();
 
         botaoProcurar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/search.png"))); // NOI18N
+        botaoProcurar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoProcurarActionPerformed(evt);
+            }
+        });
 
         tabelaGeral.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -78,6 +78,15 @@ private DefaultTableModel dtg;
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botaoProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoProcurarActionPerformed
+        ContatoDAO ct = new ContatoDAO();
+        try {
+            this.listaContatos(ct.localizar(this.campoProcurar.getText()));
+        } catch (SQLException | ParseException ex) {
+            Logger.getLogger(JanelaProcura.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_botaoProcurarActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoProcurar;
     private javax.swing.JTextField campoProcurar;
@@ -85,21 +94,18 @@ private DefaultTableModel dtg;
     private javax.swing.JTable tabelaGeral;
     // End of variables declaration//GEN-END:variables
 
-    private void atualizaTabela() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    private void listaContatos() throws SQLException, ParseException {
-        ContatoDAO contato = new ContatoDAO();
+    private void listaContatos(List<ContatoBEAN> lista) throws SQLException, ParseException {
+       
         this.dtg = (DefaultTableModel) this.tabelaGeral.getModel();
         dtg.setRowCount(0);
-        ContatoBEAN a = new ContatoBEAN();
-        ProfissaoBEAN b = new ProfissaoBEAN();
-        List<ContatoBEAN> lista = contato.localizar(a, b);
-        
+        this.limpaTabela();
+
         for (ContatoBEAN cb : lista) {
-             dtg.addRow(new Object[]{cb.getNome(),cb.getCidade(),cb.getPathImg()});
+            dtg.addRow(new Object[]{cb.getNome(), cb.getCidade(), cb.getPathImg()});
         }
-        
+    }
+
+    private void limpaTabela() {
+        this.dtg.setNumRows(0);
     }
 }
-

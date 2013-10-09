@@ -1,11 +1,9 @@
 package dao;
 
 import bean.EstadoBEAN;
-import bean.PaisBEAN;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import util.ConexaoBanco;
@@ -21,7 +19,7 @@ public class EstadoDAO {
     }
 
     public List<EstadoBEAN> listaTodos() throws SQLException {
-        List<EstadoBEAN> lista = new ArrayList<EstadoBEAN>();
+        List<EstadoBEAN> lista = new ArrayList<>();
         String sql = "SELECT * FROM estado WHERE cod_pais = ?";
         stm = bd.conecta().prepareStatement(sql);
         stm.setInt(1, this.id_pais);

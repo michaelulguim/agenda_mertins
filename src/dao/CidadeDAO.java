@@ -16,20 +16,20 @@ import util.ConexaoBanco;
 public class CidadeDAO {
 
     ConexaoBanco bd;
-    static PreparedStatement stm = null;
-    private final int idCidade;
+    private final int idEstado;
 
-    public CidadeDAO(int id) {
+    public CidadeDAO(int idEstado) {
         bd = new ConexaoBanco();
-        this.idCidade = id;
+        this.idEstado = idEstado;
     }
     
     public List<CidadeBEAN> listaTodos() throws SQLException{
-        List<CidadeBEAN> lista = null;
+        PreparedStatement stm;
+        List<CidadeBEAN> lista = new ArrayList<>();
         String sql = "SELECT * FROM cidade WHERE cod_estado = ?";
       
         stm = bd.conecta().prepareStatement(sql);
-        stm.setInt(1, this.idCidade);
+        stm.setInt(1, this.idEstado);
        
         ResultSet rs = stm.executeQuery();
         while(rs.next()){

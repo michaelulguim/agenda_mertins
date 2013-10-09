@@ -16,7 +16,7 @@ public class ProfissaoDAO {
     static PreparedStatement stm = null;
 
     public List<ProfissaoBEAN> listaTodos() throws SQLException {
-        List<ProfissaoBEAN> lista = new ArrayList<ProfissaoBEAN>();
+        List<ProfissaoBEAN> lista = new ArrayList<>();
         String sql = "SELECT * FROM profissao";
         Statement st = bd.conecta().createStatement();
         ResultSet rs = st.executeQuery(sql);

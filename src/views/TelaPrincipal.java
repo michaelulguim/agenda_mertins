@@ -1,6 +1,9 @@
 package views;
 
-import java.awt.Toolkit;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 
 public class TelaPrincipal extends javax.swing.JFrame {
@@ -8,13 +11,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private JanelaContato Contato;
     private JanelaSobre Sobre;
 
-
     public TelaPrincipal() {
         initComponents();
-        Toolkit toolkit = Toolkit.getDefaultToolkit();  
-        this.setSize(toolkit.getScreenSize());
-    }
+        this.setSize(800, 600);
 
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -102,30 +103,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void botaoAdicionarContatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAdicionarContatoActionPerformed
         JanelaContato contato = new JanelaContato();
-        montaJanela(contato);
-       
+        this.montaJanela(contato);
+
     }//GEN-LAST:event_botaoAdicionarContatoActionPerformed
 
     private void botaoProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoProcurarActionPerformed
+        try {
+            this.montaJanela(new JanelaProcura());
+        } catch (SQLException | ParseException ex) {
+            Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        JanelaProcura Telas = new JanelaProcura();
-        this.areaDeTrabalho.add(Telas);
-        Telas.setVisible(true);
     }//GEN-LAST:event_botaoProcurarActionPerformed
 
     private void botaoExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoExitActionPerformed
         super.dispose();
         // TODO add your handling code here:
     }//GEN-LAST:event_botaoExitActionPerformed
-    
-    private void montaJanela(JComponent obj) {
-            if (!obj.isVisible()) {
-                if (!obj.isValid()) {
-                   this.areaDeTrabalho.add(obj);
-                }
-                obj.setVisible(true);
-            }
-        }
+
     public static void main(String args[]) {
 
         try {
@@ -135,25 +130,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new TelaPrincipal().setVisible(true);
             }
         });
-        
-        
+
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane areaDeTrabalho;
@@ -166,5 +156,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JDesktopPane jDesktopPane1;
     // End of variables declaration//GEN-END:variables
 
-    
+    private void montaJanela(JComponent obj) {
+        if (!obj.isVisible()) {
+            if (!obj.isValid()) {
+                this.areaDeTrabalho.add(obj);
+            }
+            obj.setVisible(true);
+        }
+    }
 }

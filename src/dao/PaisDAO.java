@@ -17,7 +17,7 @@ public class PaisDAO {
 
     
     public List<PaisBEAN> listaTodos() throws SQLException {
-        List<PaisBEAN> lista = new ArrayList<PaisBEAN>();
+        List<PaisBEAN> lista = new ArrayList<>();
         String sql = "SELECT * FROM pais ORDER BY nom_pais ASC";
         Statement st = bd.conecta().createStatement();
         ResultSet rs = st.executeQuery(sql);
