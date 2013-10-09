@@ -12,7 +12,9 @@ import dao.EstadoDAO;
 import dao.GrupoDAO;
 import dao.PaisDAO;
 import dao.ProfissaoDAO;
+import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -21,12 +23,15 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
+import util.Data;
 import util.FiltrodeArquivo;
+import util.ManipulaArquivo;
 
 public class JanelaContato extends javax.swing.JInternalFrame {
 
     private final JFileChooser fc;
     private DefaultTableModel dtm;
+    private ContatoBEAN contato;
 
     public JanelaContato() {
         initComponents();
@@ -36,10 +41,8 @@ public class JanelaContato extends javax.swing.JInternalFrame {
         this.comboEstado.setEnabled(false);
         this.comboCidade.setEnabled(false);
         this.fc = new JFileChooser();
-        /* TABELA TELEFONES */
-        dtm = (DefaultTableModel) this.tabelaTelefone.getModel();
-        dtm.setRowCount(0);
-
+        this.contato = new ContatoBEAN();
+        this.iniTabelaTelefone();
     }
 
     @SuppressWarnings("unchecked")
@@ -408,7 +411,7 @@ public class JanelaContato extends javax.swing.JInternalFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 16, Short.MAX_VALUE)))
+                        .addGap(0, 18, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -427,35 +430,26 @@ public class JanelaContato extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_botaoFecharJanelaActionPerformed
 
     private void botaoInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoInserirActionPerformed
-        ContatoBEAN contato = new ContatoBEAN();
-        contato.setNome(campoNome.getText());
-        //contato.setData(campoNascimento.getText());
-
-        //Data dt = new Data ();
-        ProfissaoBEAN profissao = (ProfissaoBEAN) comboProfissao.getSelectedItem();
-        contato.setProf(profissao);
-        CidadeBEAN cidade = (CidadeBEAN) comboCidade.getSelectedItem();
-        contato.setCidade(cidade);
-
-        ContatoDAO gravar = new ContatoDAO();
         try {
-            gravar.inserir(contato);
-        } catch (SQLException | ParseException ex) {
+            this.salvaContato();
+        } catch (ParseException ex) {
             Logger.getLogger(JanelaContato.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_botaoInserirActionPerformed
 
     private void contatoImagemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_contatoImagemMouseClicked
-        // TODO add your handling code here:
-        this.salvaImagem();
+        try {
+            // TODO add your handling code here:
+            this.salvaImagem();
+        } catch (IOException ex) {
+            Logger.getLogger(JanelaContato.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_contatoImagemMouseClicked
 
     private void botaoTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoTelefoneActionPerformed
-        campoTelefone.getText();
-        dtm.addRow(new Object[]{campoTelefone.getText(), "teste"});
-        //tabelaTelefone.add
-        // TODO add your handling code here:
+       this.listaTelefones();
+
     }//GEN-LAST:event_botaoTelefoneActionPerformed
 
     private void botaoGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoGrupoActionPerformed
@@ -593,23 +587,48 @@ public class JanelaContato extends javax.swing.JInternalFrame {
         }
     }
 
-    private void salvaImagem() {
+    private void salvaImagem() throws IOException {
+        FileFilter filtro;
+        File origem, destino;
+
+        fc.setFileFilter(new FiltrodeArquivo());
+
         int resultado = fc.showOpenDialog(null);
         if (resultado == JFileChooser.APPROVE_OPTION) {
-            String caminhoArquivo;
-            caminhoArquivo = fc.getSelectedFile().getAbsolutePath();
-
-            ImageIcon novo = new ImageIcon(caminhoArquivo);
+            origem = fc.getSelectedFile();
+            ImageIcon novo = new ImageIcon(origem.getAbsolutePath());
             contatoImagem.setIcon(novo);
+            destino = new File("/home/ulguim/NetBeansProjects/agenda/uploads/" + origem.getPath());
+            ManipulaArquivo.copiaArquivo(origem, destino);
+
         }
-        FileFilter filtro;
-        fc.setFileFilter(new FiltrodeArquivo());
 
     }
 
-    private void listaContatos() {
-        DefaultTableModel dt = (DefaultTableModel) this.tabelaTelefone.getModel();
-        dt.setRowCount(0);
-        dt.addRow(new Object[]{campoTelefone.getText(), "teste"});
+    private void listaTelefones() {
+        
+        this.dtm.addRow(new Object[]{campoTelefone.getText(), "teste"});
+    }
+
+    private void salvaContato() throws ParseException {
+
+        contato.setData(Data.strToData(this.campoNascimento.getText()));
+        contato.setNome(campoNome.getText());
+        ProfissaoBEAN profissao = (ProfissaoBEAN) comboProfissao.getSelectedItem();
+        contato.setProf(profissao);
+        CidadeBEAN cidade = (CidadeBEAN) comboCidade.getSelectedItem();
+        contato.setCidade(cidade);
+
+        ContatoDAO gravar = new ContatoDAO();
+        try {
+            gravar.inserir(contato);
+        } catch (SQLException | ParseException ex) {
+            Logger.getLogger(JanelaContato.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void iniTabelaTelefone() {
+        this.dtm = (DefaultTableModel) this.tabelaTelefone.getModel();
+        this.dtm.setRowCount(0);
     }
 }
